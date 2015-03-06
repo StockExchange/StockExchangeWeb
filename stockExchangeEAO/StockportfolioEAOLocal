@@ -1,0 +1,18 @@
+package StockExchange.eao.ics;
+
+import java.util.ArrayList;
+
+import javax.ejb.Local;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+
+@Local
+public interface StockportfolioEAOLocal {
+											
+	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio );
+	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio );
+	public void deleteStockportfolio(Stockportfolio s);
+	public ArrayList<Stockportfolio> getAllUserStocks(String id);
+
+}
