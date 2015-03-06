@@ -1,1 +1,77 @@
 
+package StockExchange.facade.ics;
+
+import java.util.ArrayList;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+
+import StockExchange.eao.ics.StockEAOLocal;
+import StockExchange.eao.ics.StockportfolioEAOLocal;
+import StockExchange.eao.ics.UsersEAO;
+import StockExchange.eao.ics.UsersEAOLocal;
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+
+/**
+ * Session Bean implementation class Facade
+ */
+@Stateless
+public class Facade implements FacadeLocal {
+
+	@EJB
+	private StockEAOLocal StockEAO;
+	@EJB
+	private UsersEAOLocal UsersEAO;
+	@EJB
+	private StockportfolioEAOLocal StockportfolioEAO;
+
+	public Facade() {
+	}
+
+	public Stock findByStock(String id) {
+		return StockEAO.findStock(id);
+	}
+
+	public Stock createStock(Stock stock) {
+		return StockEAO.createStock(stock);
+	}
+
+	public Stock updateStock(Stock stock) {
+		return StockEAO.updateStock(stock);
+	}
+
+	public void deleteStock(String id) {
+		StockEAO.deleteStock(id);
+	}
+	public ArrayList<Stock> getAllStocks(){
+		return StockEAO.getAllStocks();
+	}
+	public Users findUsers(String id) {
+		return UsersEAO.findUsers(id);
+	}
+	public Users createUsers(Users user){
+		return UsersEAO.createUsers(user);
+	}
+	public Users updateUsers(Users user){
+		return UsersEAO.updateUsers(user);
+	}
+	public void deleteUsers(String id){
+		UsersEAO.deleteUsers(id);
+	}
+	
+	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio){
+		return StockportfolioEAO.createStockportfolio(stockportfolio);
+	}
+	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio){
+		return StockportfolioEAO.updateStockportfolio(stockportfolio);
+	}
+	public void deleteStockportfolio(Stockportfolio s){
+		StockportfolioEAO.deleteStockportfolio(s);
+	}
+	public ArrayList<Stockportfolio> getAllUserStocks(String id){
+		return StockportfolioEAO.getAllUserStocks(id);
+	}
+
+}
