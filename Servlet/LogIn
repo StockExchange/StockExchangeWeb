@@ -1,1 +1,66 @@
 
+package org.ics.ejb.project;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@EJB
+	FacadeLocal facade;
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String userId, password;
+		
+		userId = request.getParameter("userId");
+		password = request.getParameter("password");
+		
+		
+		boolean result;
+		
+		Users user = null;
+		try {
+			user = facade.findUsers(userId);
+			if (user.getPassword().equals(password)) {
+				result =true;
+			} else {
+				result = false;
+				
+			}
+		} catch (Exception e) {
+			result = false;
+		}
+		
+		if(result == true) {
+			request.getSession().setAttribute("user", user);
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+			
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade.getAllUserStocks(userId);
+			
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			
+			response.sendRedirect("test.jsp");
+		} else {
+			response.sendRedirect("login.jsp");
+		}
+		
+	}
+	
+
+}
