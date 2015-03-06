@@ -1,0 +1,77 @@
+package StockExchange.eao.ics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.jboss.security.plugins.TmpFilePassword;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+
+@Stateless
+public class StockportfolioEAO implements StockportfolioEAOLocal {
+
+	@PersistenceContext(unitName = "LabEJBSql")
+	private EntityManager em;
+	
+    public StockportfolioEAO() {
+    }
+
+	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio) {
+		em.persist(stockportfolio);
+		return stockportfolio;
+	}
+
+	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio) {
+		em.merge(stockportfolio);
+		return stockportfolio;
+	}
+
+	public void deleteStockportfolio(Stockportfolio s) {
+		if (s != null) {
+			em.remove(s);
+		}
+	}
+	public ArrayList<Stockportfolio> getAllUserStocks(String id){
+	  
+		ArrayList<Stockportfolio> stockportfolioList = new ArrayList<Stockportfolio>();
+	    
+	    Query querySName = em.createQuery("select sName from Stockportfolio Where userId='"+id+"'", String.class);
+	    Query queryDate = em.createQuery("select date from Stockportfolio Where userId='"+id+"'", String.class);
+	    Query queryValue = em.createQuery("select value from Stockportfolio Where userId='"+id+"'", Float.class);
+	    Query queryAmount = em.createQuery("select amount from Stockportfolio Where userId='"+id+"'", Integer.class);
+	    List<String> sName =  querySName.getResultList();
+	    List<String> date =  queryDate.getResultList();
+	    List<Float> value =  queryValue.getResultList();
+	    List<Integer> amount =  queryAmount.getResultList();
+
+	   
+	    
+	    for(int i = 0; i<sName.size(); i++){
+	    	Stockportfolio tmpStockportfolio = new Stockportfolio();
+	    	String tmpSName = sName.get(i);
+	    	String tmpDate = date.get(i);
+	    	float tmpValue = value.get(i);
+	    	int tmpAmount = amount.get(i);
+	    	
+	    	tmpStockportfolio.setUserId(id);
+	    	tmpStockportfolio.setsName(tmpSName);
+	    	tmpStockportfolio.setDate(tmpDate);
+	    	tmpStockportfolio.setValue(tmpValue);
+	    	tmpStockportfolio.setAmount(tmpAmount);
+	    	
+	    	stockportfolioList.add(tmpStockportfolio);
+	    	
+	    }
+	    
+	    
+	    return stockportfolioList;
+	    
+	}
+
+}
