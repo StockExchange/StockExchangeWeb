@@ -1,0 +1,44 @@
+package StockExchange.eao.ics;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import StockExchange.ejb.ics.Users;
+
+/**
+ * Session Bean implementation class UsersEAO
+ */
+@Stateless
+public class UsersEAO implements UsersEAOLocal {
+
+	@PersistenceContext(unitName = "LabEJBSql")
+	private EntityManager em;
+
+	public UsersEAO() {
+
+	}
+
+	public Users findUsers(String id) {
+		return em.find(Users.class, id);
+		
+	}
+
+	public Users createUsers(Users users) {
+		em.persist(users);
+		return users;
+	}
+
+	public Users updateUsers(Users users) {
+		em.merge(users);
+		return users;
+	}
+
+	public void deleteUsers(String id) {
+		Users m = this.findUsers(id);
+		if (m != null) {
+			em.remove(m);
+		}
+	}
+
+}
