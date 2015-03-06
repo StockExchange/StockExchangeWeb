@@ -1,1 +1,52 @@
 
+package StockExchange.ejb.ics;
+
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name="Stock")
+public class Stock implements Serializable {
+	
+	private String sInfo;
+	private String orgNr;
+	private Double currentValue;
+	private String sName;
+	
+	@Id
+	@Column(name="sName")
+	public String getsName() {
+		return sName;
+	}
+	public void setsName(String sName) {
+		this.sName = sName;
+	}
+	@Column(name="sInfo")
+	public String getsInfo() {
+		return sInfo;
+	}
+	public void setsInfo(String sInfo) {
+		this.sInfo = sInfo;
+	}
+	@Column(name="orgNr")
+	public String getOrgNr() {
+		return orgNr;
+	}
+	public void setOrgNr(String orgNr) {
+		this.orgNr = orgNr;
+	}
+	@Column(name="currentValue")
+	public Double getvalue() {
+		return currentValue;
+	}
+	public void setvalue(Double value) {
+		this.currentValue = value;
+	}
+	
+	
+
+}
