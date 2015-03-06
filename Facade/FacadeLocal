@@ -1,1 +1,31 @@
 
+package StockExchange.facade.ics;
+
+import java.util.ArrayList;
+
+import javax.ejb.Local;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+
+@Local
+public interface FacadeLocal {
+	
+	public Stock findByStock(String id);
+	public Stock createStock(Stock stock);
+	public Stock updateStock(Stock stock);
+	public void deleteStock(String id);
+	public ArrayList<Stock> getAllStocks();
+	
+	public Users findUsers(String id);
+	public Users createUsers(Users user);
+	public Users updateUsers(Users user);
+	public void deleteUsers(String id);
+	
+	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio );
+	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio );
+	public void deleteStockportfolio(Stockportfolio s);
+	public ArrayList<Stockportfolio> getAllUserStocks(String id);
+
+}
