@@ -1,1 +1,60 @@
 
+package StockExchange.eao.ics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import com.sun.mail.imap.protocol.Item;
+
+import StockExchange.ejb.ics.Stock;
+
+/**
+ * Session Bean implementation class StockEAO
+ */
+@Stateless
+public class StockEAO implements StockEAOLocal {
+
+	@PersistenceContext(unitName = "LabEJBSql")
+	private EntityManager em;
+
+	public StockEAO() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Stock findStock(String id) {
+		return em.find(Stock.class, id);
+	}
+
+	public Stock createStock(Stock stock) {
+		em.persist(stock);
+		return stock;
+	}
+
+	public Stock updateStock(Stock stock) {
+		em.merge(stock);
+		return stock;
+	}
+
+	public void deleteStock(String id) {
+		Stock m = this.findStock(id);
+		if (m != null) {
+			em.remove(m);
+		}
+	}
+	public ArrayList<Stock> getAllStocks(){
+		ArrayList<Stock> tList = new ArrayList<Stock>();
+	    Query query = em.createQuery("Select sName from Stock", String.class);
+	    List<String> li =  query.getResultList();
+	    for(String s : li) {
+	    	Stock stock = em.find(Stock.class, s);
+	    	tList.add(stock);
+	    }
+		
+		return tList;
+	}
+}
