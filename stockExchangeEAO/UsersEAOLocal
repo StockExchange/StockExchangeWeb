@@ -1,0 +1,15 @@
+package StockExchange.eao.ics;
+
+import javax.ejb.Local;
+
+import StockExchange.ejb.ics.Users;
+
+@Local
+public interface UsersEAOLocal {
+	
+	public Users findUsers(String id);
+	public Users createUsers(Users user);
+	public Users updateUsers(Users user);
+	public void deleteUsers(String id);
+
+}
