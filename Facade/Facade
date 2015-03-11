@@ -1,4 +1,3 @@
-
 package StockExchange.facade.ics;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class Facade implements FacadeLocal {
 	public Facade() {
 	}
 
-	public Stock findByStock(String id) {
+	public Stock findStock(String id) {
 		return StockEAO.findStock(id);
 	}
 
@@ -59,6 +58,10 @@ public class Facade implements FacadeLocal {
 	}
 	public void deleteUsers(String id){
 		UsersEAO.deleteUsers(id);
+	}
+	
+	public Stockportfolio findStockporfolio(String userId, String sName){
+		return StockportfolioEAO.findStockporfolio(userId, sName);
 	}
 	
 	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio){
