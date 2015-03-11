@@ -1,0 +1,89 @@
+package org.ics.ejb.project;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+
+@WebServlet("/StockSell")
+public class StockSell extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	@EJB
+	FacadeLocal facade;
+  
+	public StockSell() {
+    }
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String userId, stocktoSell;
+		
+		stocktoSell = request.getParameter("stockToSell");
+		userId = request.getParameter("userId");
+		
+		Users user = facade.findUsers(userId);
+		
+		
+		if(user != null) {
+			request.getSession().setAttribute("user", user);
+		} else {
+			request.getSession().setAttribute("feedbackStockportfolio", "something went worng");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+		
+		Stockportfolio stockportfolio = facade.findStockporfolio(userId, stocktoSell);
+		
+		
+		if(stockportfolio == null) {
+			request.getSession().setAttribute("feedbackStockportfolio", "Stock not in portfolio");
+			response.sendRedirect("test.jsp");
+			return;
+		} else {
+			
+			int newAmount = (stockportfolio.getAmount() - 1);
+			
+			if(newAmount > 0) {
+				stockportfolio.setAmount(newAmount);
+				Double stockCurrentValue = facade.findStock(stockportfolio.getsName()).getvalue();
+				float newAccount = (float) (user.getAccount() + stockCurrentValue);
+				user.setAccount(newAccount);
+				stockportfolio.setAmount(newAmount);
+				facade.updateStockportfolio(stockportfolio);
+				facade.updateUsers(user);
+				
+			} else {
+				Double stockCurrentValue = facade.findStock(stockportfolio.getsName()).getvalue();
+				float newAccount = (float) (user.getAccount() + stockCurrentValue);
+				user.setAccount(newAccount);
+				facade.updateUsers(user);
+				facade.deleteStockportfolio(stockportfolio);
+				
+			}
+			
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+			
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade.getAllUserStocks(userId);
+			
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			request.getSession().setAttribute("feedbackStockportfolio", "Stock sold");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+		
+	}
+
+}
