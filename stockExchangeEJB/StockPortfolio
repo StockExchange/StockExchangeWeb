@@ -8,9 +8,23 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity  
+@NamedQueries({
+@NamedQuery(
+		name = "getAllUserStocks",
+		query = "Select p from Stockportfolio p Where p.userId=:userId"
+		),
+@NamedQuery(
+		name ="getStockportfolio",
+		query ="Select p from Stockportfolio p Where p.userId=:userId and p.sName=:sName"
+		)
+
+})
+
 @Table(name="Stockportfolio")
 public class Stockportfolio implements Serializable {
 	
@@ -31,6 +45,7 @@ public class Stockportfolio implements Serializable {
 		this.userId = userId;
 	}
 	
+	@Id
 	@Column(name="sName")
 	public String getsName() {
 		return sName;
