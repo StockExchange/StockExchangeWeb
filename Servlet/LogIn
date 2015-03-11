@@ -1,4 +1,3 @@
-
 package org.ics.ejb.project;
 
 import java.io.IOException;
@@ -27,6 +26,17 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String userId, password;
 		
+		try {
+			String logout = request.getParameter("log");
+			if(logout.equals("logout")) {
+				request.getSession().setAttribute("feedbackLogin", "");
+				response.sendRedirect("login.jsp");
+				return;
+			}
+		} catch (Exception e1) {
+		}
+		
+		
 		userId = request.getParameter("userId");
 		password = request.getParameter("password");
 		
@@ -54,9 +64,10 @@ public class LoginServlet extends HttpServlet {
 			ArrayList<Stockportfolio> tmpStockUserList = facade.getAllUserStocks(userId);
 			
 			request.getSession().setAttribute("userStocks", tmpStockUserList);
-			
+			request.getSession().setAttribute("feedbackStockportfolio", " ");
 			response.sendRedirect("test.jsp");
 		} else {
+			request.getSession().setAttribute("feedbackLogin", "Incorrect username or password");
 			response.sendRedirect("login.jsp");
 		}
 		
