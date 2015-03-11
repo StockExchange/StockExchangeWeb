@@ -1,4 +1,3 @@
-
 package StockExchange.eao.ics;
 
 import java.util.ArrayList;
@@ -6,22 +5,23 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.sun.mail.imap.protocol.Item;
 
 import StockExchange.ejb.ics.Stock;
 
-/**
- * Session Bean implementation class StockEAO
- */
+
+
 @Stateless
 public class StockEAO implements StockEAOLocal {
 
 	@PersistenceContext(unitName = "LabEJBSql")
 	private EntityManager em;
-
+	
 	public StockEAO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -47,14 +47,15 @@ public class StockEAO implements StockEAOLocal {
 		}
 	}
 	public ArrayList<Stock> getAllStocks(){
-		ArrayList<Stock> tList = new ArrayList<Stock>();
-	    Query query = em.createQuery("Select sName from Stock", String.class);
-	    List<String> li =  query.getResultList();
-	    for(String s : li) {
-	    	Stock stock = em.find(Stock.class, s);
-	    	tList.add(stock);
-	    }
+	
+		TypedQuery typedQuery = em.createNamedQuery("getAllStocks", Stock.class);
+		ArrayList<Stock> tList = (ArrayList<Stock>) typedQuery.getResultList();
+		if(tList != null) {
+			return tList;
+		} else {
+			return null;
+		}
 		
-		return tList;
+		
 	}
 }
