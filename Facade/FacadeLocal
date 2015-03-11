@@ -1,4 +1,3 @@
-
 package StockExchange.facade.ics;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import StockExchange.ejb.ics.Users;
 @Local
 public interface FacadeLocal {
 	
-	public Stock findByStock(String id);
+	public Stock findStock(String id);
 	public Stock createStock(Stock stock);
 	public Stock updateStock(Stock stock);
 	public void deleteStock(String id);
@@ -23,6 +22,7 @@ public interface FacadeLocal {
 	public Users updateUsers(Users user);
 	public void deleteUsers(String id);
 	
+	public Stockportfolio findStockporfolio(String userId, String sName);
 	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio );
 	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio );
 	public void deleteStockportfolio(Stockportfolio s);
