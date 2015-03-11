@@ -1,14 +1,20 @@
-
 package StockExchange.ejb.ics;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
 @Entity
+@NamedQuery(
+	name="getAllStocks",
+	query ="Select p from Stock p"
+)
+
 @Table(name="Stock")
 public class Stock implements Serializable {
 	
@@ -16,6 +22,8 @@ public class Stock implements Serializable {
 	private String orgNr;
 	private Double currentValue;
 	private String sName;
+	
+	
 	
 	@Id
 	@Column(name="sName")
