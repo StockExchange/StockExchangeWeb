@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.jboss.security.plugins.TmpFilePassword;
 
@@ -21,6 +22,22 @@ public class StockportfolioEAO implements StockportfolioEAOLocal {
 	
     public StockportfolioEAO() {
     }
+    
+    public Stockportfolio findStockporfolio(String userId, String sName) {
+  
+    	Stockportfolio stockportfolio = new Stockportfolio();
+    	
+    	try {
+			TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getStockportfolio", Stockportfolio.class); //"select p from Stockportfolio p where userid ='"+userId+"'and sname='"+sName+"'"
+			typedQuery.setParameter("userId", userId);
+			typedQuery.setParameter("sName", sName);
+			stockportfolio = typedQuery.getSingleResult();
+			return stockportfolio;
+		} catch (Exception e) {
+			stockportfolio = null;
+			return stockportfolio;
+		}
+    }
 
 	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio) {
 		em.persist(stockportfolio);
@@ -33,44 +50,23 @@ public class StockportfolioEAO implements StockportfolioEAOLocal {
 	}
 
 	public void deleteStockportfolio(Stockportfolio s) {
-		if (s != null) {
-			em.remove(s);
-		}
+			Stockportfolio newS = em.merge(s);
+			em.remove(newS);
+	
+		
 	}
-	public ArrayList<Stockportfolio> getAllUserStocks(String id){
+	public ArrayList<Stockportfolio> getAllUserStocks(String userId){
 	  
-		ArrayList<Stockportfolio> stockportfolioList = new ArrayList<Stockportfolio>();
+	    TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getAllUserStocks", Stockportfolio.class).setParameter("userId", userId);
+	    ArrayList<Stockportfolio> stockportfolioList = (ArrayList<Stockportfolio>) typedQuery.getResultList();
 	    
-	    Query querySName = em.createQuery("select sName from Stockportfolio Where userId='"+id+"'", String.class);
-	    Query queryDate = em.createQuery("select date from Stockportfolio Where userId='"+id+"'", String.class);
-	    Query queryValue = em.createQuery("select value from Stockportfolio Where userId='"+id+"'", Float.class);
-	    Query queryAmount = em.createQuery("select amount from Stockportfolio Where userId='"+id+"'", Integer.class);
-	    List<String> sName =  querySName.getResultList();
-	    List<String> date =  queryDate.getResultList();
-	    List<Float> value =  queryValue.getResultList();
-	    List<Integer> amount =  queryAmount.getResultList();
-
-	   
-	    
-	    for(int i = 0; i<sName.size(); i++){
-	    	Stockportfolio tmpStockportfolio = new Stockportfolio();
-	    	String tmpSName = sName.get(i);
-	    	String tmpDate = date.get(i);
-	    	float tmpValue = value.get(i);
-	    	int tmpAmount = amount.get(i);
-	    	
-	    	tmpStockportfolio.setUserId(id);
-	    	tmpStockportfolio.setsName(tmpSName);
-	    	tmpStockportfolio.setDate(tmpDate);
-	    	tmpStockportfolio.setValue(tmpValue);
-	    	tmpStockportfolio.setAmount(tmpAmount);
-	    	
-	    	stockportfolioList.add(tmpStockportfolio);
-	    	
+	    if(stockportfolioList != null){
+	    	return stockportfolioList;
 	    }
-	    
-	    
-	    return stockportfolioList;
+	    else {
+	    	return null;
+	    }
+	 
 	    
 	}
 
