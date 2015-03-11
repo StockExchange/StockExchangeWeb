@@ -1,41 +1,113 @@
-
-<%@page import="StockExchange.ejb.ics.Stockportfolio"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1" import="StockExchange.ejb.ics.Users"
+	pageEncoding="ISO-8859-1" import="StockExchange.ejb.ics.Stockportfolio"
 	import="java.util.ArrayList" import="StockExchange.ejb.ics.Stock"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>stockportfolio</title>
+<title>Testclass</title>
 </head>
 <body>
 
-	<%
-		Users user = (Users) session.getAttribute("user");
-	%>
-	User :<%=user.getUserFName()%>
-	<br> All Stocks:
-	<%
-		ArrayList<Stock> stocks = (ArrayList<Stock>) session.getAttribute("stockList");
-	for(Stock st : stocks) {
-	%><br>
-	<%=st.getsName()%>
-	<%
-		}
-	%>
-	<br>
-	Users specific stocks
-	<%
-	ArrayList<Stockportfolio> userStocks = (ArrayList<Stockportfolio>) session.getAttribute("userStocks");
-	for(Stockportfolio st : userStocks) {
-	%><br>
-	<%=st.getsName() + "  value :" + st.getValue() %>
-	<%
-	}
-	%>
 	
+	<form action="login" method="post">
+		<input type="hidden" value="logout" name="log" readonly /> <input
+			type="submit" value="Logout" />
+	</form>
+	<jsp:useBean id="user" class="StockExchange.ejb.ics.Users"
+		scope="session" />
 
+	<br> User :
+	<jsp:getProperty property="userFName" name="user" />
+	<br> User ID:
+	<jsp:getProperty property="userId" name="user" />
+	<br> User Account:
+	<jsp:getProperty property="account" name="user" />
+
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<jsp:useBean id="feedbackStockportfolio" class="java.lang.String" scope="session" />
+	 <%=feedbackStockportfolio%> 
+	<br>											 
+	<br> All Stocks:
+
+	<div
+		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
+		<table width="300" rules=rows>
+			<tr>
+				<th>Name</th>
+				<th>Value</th>
+			</tr>
+			<%
+				ArrayList<Stock> stocks = (ArrayList<Stock>) session
+						.getAttribute("stockList");
+				pageContext.setAttribute("stocks", stocks);
+			%>
+
+			<c:forEach items="${stocks}" var="stock">
+				<tr>
+					<td>
+						<center>
+							<c:out value="${stock.sName}" />
+						</center>
+					</td>
+					<td>
+						<center>
+							<c:out value="${stock.value}" />
+						</center>
+					</td>
+
+				</tr>
+			</c:forEach>
+
+		</table>
+	</div>
+	<form action="StockBuy" method="post" align="left">
+		<br>Stock to Buy: <input type="text" name="stockToBuy" /> <input
+			type="submit" value="Buy" /> <input type="hidden" name="userId"
+			value="<jsp:getProperty property="userId" name="user"/>" readonly />
+
+	</form>
+	
+	<br> Your Stocks
+
+	<div
+		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
+		<table width="300" rules=rows>
+			<tr>
+				<th>Name</th>
+				<th>Buy Value</th>
+				<th>Amount</th>
+			</tr>
+			<%
+				ArrayList<Stockportfolio> userStocks = (ArrayList<Stockportfolio>) session
+						.getAttribute("userStocks");
+				pageContext.setAttribute("userStocks", userStocks);
+			%>
+
+			<c:forEach items="${userStocks}" var="stockport">
+				<tr>
+					<td><center>
+							<c:out value="${stockport.sName}" />
+						</center></td>
+					<td><center>
+							<c:out value="${stockport.value}" />
+						</center></td>
+					<td><center>
+							<c:out value="${stockport.amount}" />
+						</center></td>
+
+				</tr>
+			</c:forEach>
+
+		</table>
+	</div>
+	<form action="StockSell" method="post" align="left">
+		<br>Stock to Sell: <input type="text" name="stockToSell" /> <input
+			type="submit" value="Sell" /> <input type="hidden" name="userId"
+			value="<jsp:getProperty property="userId" name="user"/>" readonly />
+	</form>
 
 </body>
 </html>
