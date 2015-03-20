@@ -30,7 +30,7 @@ public class StockBuy extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String stocktoBuy, userId, s;
-		int numberOfStocksToBuy = 1;
+		int numberOfStocksToBuy = 0;
 
 		stocktoBuy = request.getParameter("stockToBuy");
 		userId = request.getParameter("userId");
@@ -40,6 +40,11 @@ public class StockBuy extends HttpServlet {
 		
 		try {
 			numberOfStocksToBuy = Integer.valueOf(s);
+			if(numberOfStocksToBuy < 1) {
+				request.getSession().setAttribute("feedbackStockportfolio", "Invalid amount");
+				response.sendRedirect("test.jsp");
+				return;
+			}
 		} catch (Exception e1) {
 			request.getSession().setAttribute("feedbackStockportfolio", "Need to set Amount of Stocks");
 			response.sendRedirect("test.jsp");
