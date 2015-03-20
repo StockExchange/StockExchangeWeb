@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.jms.Session;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,9 +17,6 @@ import StockExchange.ejb.ics.Stockportfolio;
 import StockExchange.ejb.ics.Users;
 import StockExchange.facade.ics.FacadeLocal;
 
-/**
- * Servlet implementation class StockBuy
- */
 @WebServlet("/StockBuy")
 public class StockBuy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -33,10 +29,22 @@ public class StockBuy extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		String stocktoBuy, userId;
+		String stocktoBuy, userId, s;
+		int numberOfStocksToBuy = 1;
 
 		stocktoBuy = request.getParameter("stockToBuy");
 		userId = request.getParameter("userId");
+		s = request.getParameter("numberOfStocksBuy");
+		
+		
+		
+		try {
+			numberOfStocksToBuy = Integer.valueOf(s);
+		} catch (Exception e1) {
+			request.getSession().setAttribute("feedbackStockportfolio", "Need to set Amount of Stocks");
+			response.sendRedirect("test.jsp");
+			return;
+		}
 
 		Users user = facade.findUsers(userId);
 
@@ -56,8 +64,8 @@ public class StockBuy extends HttpServlet {
 			response.sendRedirect("test.jsp");
 			return;
 		}
-
-		if (stock.getvalue() > user.getAccount()) {
+		
+		if ((stock.getvalue() * numberOfStocksToBuy) > user.getAccount()) {
 			request.getSession().setAttribute("feedbackStockportfolio",
 					"not enough money in account");
 			response.sendRedirect("test.jsp");
@@ -69,9 +77,9 @@ public class StockBuy extends HttpServlet {
 		if (sp != null) {
 			Double stockCurrentValue = facade.findStock(sp.getsName())
 					.getvalue();
-			float newAccount = (float) (user.getAccount() - stockCurrentValue);
+			float newAccount = (float) (user.getAccount() - (stockCurrentValue * numberOfStocksToBuy));
 			user.setAccount(newAccount);
-			int newAmount = (sp.getAmount() + 1);
+			int newAmount = (sp.getAmount() + numberOfStocksToBuy); //
 			sp.setAmount(newAmount);
 			facade.updateStockportfolio(sp);
 			facade.updateUsers(user);
@@ -84,7 +92,6 @@ public class StockBuy extends HttpServlet {
 					.getAllUserStocks(userId);
 
 			request.getSession().setAttribute("userStocks", tmpStockUserList);
-			request.getSession().setAttribute("feedbackStockportfolio", "");
 			request.getSession().setAttribute("feedbackStockportfolio",
 					"Stock bought");
 			response.sendRedirect("test.jsp");
@@ -96,18 +103,19 @@ public class StockBuy extends HttpServlet {
 				Stockportfolio newStockportfolio = new Stockportfolio();
 				String val = stock.getvalue().toString();
 				float stockCurrentValue = Float.valueOf(val);
-				float newAccount = (float) (user.getAccount() - stockCurrentValue);
+				float newAccount = (float) (user.getAccount() - (stockCurrentValue * numberOfStocksToBuy));//
 				user.setAccount(newAccount);
 
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				Date now = new Date();
 				String currentDate = df.format(now);
-
+				
+				
 				newStockportfolio.setUserId(userId);
-				newStockportfolio.setsName(stocktoBuy);
+				newStockportfolio.setsName(stock.getsName());
 				newStockportfolio.setDate(currentDate);
 				newStockportfolio.setValue(stockCurrentValue);
-				newStockportfolio.setAmount(1);
+				newStockportfolio.setAmount(numberOfStocksToBuy); //
 				facade.createStockportfolio(newStockportfolio);
 				facade.updateUsers(user);
 				
@@ -120,7 +128,6 @@ public class StockBuy extends HttpServlet {
 
 				request.getSession().setAttribute("userStocks",
 						tmpStockUserList);
-				request.getSession().setAttribute("feedbackStockportfolio", "");
 				request.getSession().setAttribute("feedbackStockportfolio",
 						"Stock bought");
 				response.sendRedirect("test.jsp");
@@ -130,6 +137,7 @@ public class StockBuy extends HttpServlet {
 				request.getSession().setAttribute("feedbackStockportfolio",
 						"Failed to buy Stock");
 				response.sendRedirect("test.jsp");
+				return;
 			}
 
 		}
