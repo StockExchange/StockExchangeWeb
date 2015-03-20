@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.ejb.EJB;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,19 +24,32 @@ public class StockSell extends HttpServlet {
        
 	@EJB
 	FacadeLocal facade;
-  
+	
+	//
+	@PersistenceContext(unitName = "LabEJBSql")
+	private EntityManager em;
+	//
 	public StockSell() {
     }
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String userId, stocktoSell;
+		String userId, stocktoSell, s;
+		int numberOfStocksToSell = 0;
 		
 		stocktoSell = request.getParameter("stockToSell");
 		userId = request.getParameter("userId");
+		s = request.getParameter("numberOfStocksSell");
+		
+		try {
+			numberOfStocksToSell = Integer.valueOf(s);
+		} catch (Exception e1) {
+			request.getSession().setAttribute("feedbackStockportfolio", "Need to set Amount of Stocks");
+			response.sendRedirect("test.jsp");
+			return;
+		}
 		
 		Users user = facade.findUsers(userId);
-		
 		
 		if(user != null) {
 			request.getSession().setAttribute("user", user);
@@ -51,26 +66,32 @@ public class StockSell extends HttpServlet {
 			request.getSession().setAttribute("feedbackStockportfolio", "Stock not in portfolio");
 			response.sendRedirect("test.jsp");
 			return;
+			
 		} else {
 			
-			int newAmount = (stockportfolio.getAmount() - 1);
+			int newAmount = (stockportfolio.getAmount() - numberOfStocksToSell); //
 			
 			if(newAmount > 0) {
 				stockportfolio.setAmount(newAmount);
-				Double stockCurrentValue = facade.findStock(stockportfolio.getsName()).getvalue();
-				float newAccount = (float) (user.getAccount() + stockCurrentValue);
+				 Stock tmpStock= facade.findStock(stockportfolio.getsName());
+				 Double stockCurrentValue = tmpStock.getvalue();
+				float newAccount = (float) (user.getAccount() + (stockCurrentValue * numberOfStocksToSell));
 				user.setAccount(newAccount);
 				stockportfolio.setAmount(newAmount);
 				facade.updateStockportfolio(stockportfolio);
 				facade.updateUsers(user);
 				
-			} else {
+			} else if(newAmount == 0) { //
 				Double stockCurrentValue = facade.findStock(stockportfolio.getsName()).getvalue();
-				float newAccount = (float) (user.getAccount() + stockCurrentValue);
+				float newAccount = (float) (user.getAccount() + (stockCurrentValue * numberOfStocksToSell));//
 				user.setAccount(newAccount);
 				facade.updateUsers(user);
 				facade.deleteStockportfolio(stockportfolio);
 				
+			} else { //
+				request.getSession().setAttribute("feedbackStockportfolio", "Not enoguh stocks in portfolio");
+				response.sendRedirect("test.jsp");
+				return;
 			}
 			
 			ArrayList<Stock> tmpStockList = facade.getAllStocks();
