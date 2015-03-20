@@ -43,6 +43,11 @@ public class StockSell extends HttpServlet {
 		
 		try {
 			numberOfStocksToSell = Integer.valueOf(s);
+			if(numberOfStocksToSell < 1) {
+				request.getSession().setAttribute("feedbackStockportfolio", "Invalid amount");
+				response.sendRedirect("test.jsp");
+				return;
+			}
 		} catch (Exception e1) {
 			request.getSession().setAttribute("feedbackStockportfolio", "Need to set Amount of Stocks");
 			response.sendRedirect("test.jsp");
