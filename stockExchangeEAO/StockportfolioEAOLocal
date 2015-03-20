@@ -10,6 +10,7 @@ import StockExchange.ejb.ics.Stockportfolio;
 @Local
 public interface StockportfolioEAOLocal {
 											
+	public Stockportfolio findStockporfolio(String userId, String sName);
 	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio );
 	public Stockportfolio updateStockportfolio(Stockportfolio stockportfolio );
 	public void deleteStockportfolio(Stockportfolio s);
