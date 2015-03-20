@@ -7,10 +7,75 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Testclass</title>
+
+<link
+	href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+	rel="stylesheet">
+	
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- Javascript -->
+	
+
+<script>
+	var colArray = new Array();
+	var colArray2 = new Array();
+
+	$(function() {
+
+		colArray = $('#allStocks td:nth-child(1)').map(function() {
+			return $(this).text();
+		}).get();
+
+	});
+
+	function autoC(val) {
+		var availableTags = new Array();
+
+		for (var i = 0; i < colArray.length; i++) {
+			var tmpSName = colArray[i].trim();
+			var subSName = tmpSName.substr(0, val.length);
+			if (val.toLowerCase() == subSName.toLowerCase()) {
+
+				availableTags.push(tmpSName);
+			}
+		}
+
+		$("#BuyS").autocomplete({
+			source : availableTags
+		});
+	}
+
+	$(function() {
+
+		colArray2 = $('#stockportfolio td:nth-child(1)').map(function() {
+			return $(this).text();
+		}).get();
+
+	});
+
+	function autoC2(val) {
+		var availableTags2 = new Array();
+
+		for (var i = 0; i < colArray2.length; i++) {
+			var tmpSName = colArray2[i].trim();
+			var subSName = tmpSName.substr(0, val.length);
+			if (val.toLowerCase() == subSName.toLowerCase()) {
+
+				availableTags2.push(tmpSName);
+			}
+		}
+
+		$("#SellS").autocomplete({
+			source : availableTags2
+		});
+	}
+</script>
+
 </head>
 <body>
 
-	
+
 	<form action="login" method="post">
 		<input type="hidden" value="logout" name="log" readonly /> <input
 			type="submit" value="Logout" />
@@ -27,26 +92,29 @@
 
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<jsp:useBean id="feedbackStockportfolio" class="java.lang.String" scope="session" />
-	 <%=feedbackStockportfolio%> 
-	<br>											 
+
+	<jsp:useBean id="feedbackStockportfolio" class="java.lang.String"
+		scope="session" />
+	<%=feedbackStockportfolio%>
+	<br>
 	<br> All Stocks:
+	<%
+		ArrayList<Stock> stocks = (ArrayList<Stock>) session
+				.getAttribute("stockList");
+		pageContext.setAttribute("stocks", stocks);
+	%>
 
 	<div
 		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
-		<table width="300" rules=rows>
+		<table id="allStocks" width="300" rules=rows>
 			<tr>
 				<th>Name</th>
 				<th>Value</th>
 			</tr>
-			<%
-				ArrayList<Stock> stocks = (ArrayList<Stock>) session
-						.getAttribute("stockList");
-				pageContext.setAttribute("stocks", stocks);
-			%>
+
 
 			<c:forEach items="${stocks}" var="stock">
-				<tr>
+				<tr onclick="funStockBuy(this)">
 					<td>
 						<center>
 							<c:out value="${stock.sName}" />
@@ -63,18 +131,26 @@
 
 		</table>
 	</div>
-	<form action="StockBuy" method="post" align="left">
-		<br>Stock to Buy: <input type="text" name="stockToBuy" /> <input
-			type="submit" value="Buy" /> <input type="hidden" name="userId"
-			value="<jsp:getProperty property="userId" name="user"/>" readonly />
+	<div class="ui-widget">
+		<form action="StockBuy" method="post" align="left">
+			<br>Stock to Buy: <input type="text" name="stockToBuy" id="BuyS"
+				onkeyup="autoC(this.value)" /> <input type="number"
+				onkeyup="this.value=this.value.replace(/[^\d]/,'')"
+				style="width: 50px;" name="numberOfStocksBuy" /> <input
+				type="submit" value="Buy" /> <input type="hidden" name="userId"
+				value="<jsp:getProperty property="userId" name="user"/>" readonly />
 
-	</form>
-	
+		</form>
+
+	</div>
+
+
+
 	<br> Your Stocks
 
 	<div
 		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
-		<table width="300" rules=rows>
+		<table id="stockportfolio" width="300" rules=rows>
 			<tr>
 				<th>Name</th>
 				<th>Buy Value</th>
@@ -82,12 +158,12 @@
 			</tr>
 			<%
 				ArrayList<Stockportfolio> userStocks = (ArrayList<Stockportfolio>) session
-						.getAttribute("userStocks");
-				pageContext.setAttribute("userStocks", userStocks);
+												.getAttribute("userStocks");
+										pageContext.setAttribute("userStocks", userStocks);
 			%>
 
 			<c:forEach items="${userStocks}" var="stockport">
-				<tr>
+				<tr onclick="funStockSell(this)">
 					<td><center>
 							<c:out value="${stockport.sName}" />
 						</center></td>
@@ -103,11 +179,41 @@
 
 		</table>
 	</div>
-	<form action="StockSell" method="post" align="left">
-		<br>Stock to Sell: <input type="text" name="stockToSell" /> <input
-			type="submit" value="Sell" /> <input type="hidden" name="userId"
-			value="<jsp:getProperty property="userId" name="user"/>" readonly />
-	</form>
+	<div class="ui-widget">
+		<form action="StockSell" method="post" align="left">
+			<br>Stock to Sell: <input type="text" name="stockToSell"
+				id="SellS" onkeyup="autoC2(this.value)" /> <input type="number"
+				onkeyup="this.value=this.value.replace(/[^\d]/,'')"
+				style="width: 50px;" name="numberOfStocksSell" /> <input
+				type="submit" value="Sell" /> <input type="hidden" name="userId"
+				value="<jsp:getProperty property="userId" name="user"/>" readonly />
+		</form>
+	</div>
+
+	<script language="javascript">
+		function funStockBuy(x) {
+			var tbl = document.getElementById("allStocks");
+			var row = tbl.rows.item(x.rowIndex);
+			var cel = row.cells.item(0);
+			var val = cel.innerText.trim();
+
+			var ele = document.getElementById("BuyS");
+			ele.value = val;
+
+		}
+
+		function funStockSell(x) {
+			var tbl = document.getElementById("stockportfolio");
+			var row = tbl.rows.item(x.rowIndex);
+			var cel = row.cells.item(0);
+
+			var ele = document.getElementById("SellS");
+			ele.value = cel.innerText;
+
+		}
+	</script>
+
+
 
 </body>
 </html>
