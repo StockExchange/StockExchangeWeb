@@ -5,16 +5,22 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
 @Entity
+@NamedQueries({
+	@NamedQuery(
+			name="getStock",
+			query="Select s From Stock s Where s.sName Like:sname"
+			),
 @NamedQuery(
 	name="getAllStocks",
 	query ="Select p from Stock p"
 )
-
+})
 @Table(name="Stock")
 public class Stock implements Serializable {
 	
