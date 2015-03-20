@@ -28,6 +28,7 @@ import javax.persistence.Table;
 @Table(name="Stockportfolio")
 public class Stockportfolio implements Serializable {
 	
+
 	
 	private String userId;
 	private String sName;
