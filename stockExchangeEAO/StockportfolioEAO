@@ -28,7 +28,7 @@ public class StockportfolioEAO implements StockportfolioEAOLocal {
     	Stockportfolio stockportfolio = new Stockportfolio();
     	
     	try {
-			TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getStockportfolio", Stockportfolio.class); //"select p from Stockportfolio p where userid ='"+userId+"'and sname='"+sName+"'"
+			TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getStockportfolio", Stockportfolio.class); 
 			typedQuery.setParameter("userId", userId);
 			typedQuery.setParameter("sName", sName);
 			stockportfolio = typedQuery.getSingleResult();
@@ -57,16 +57,15 @@ public class StockportfolioEAO implements StockportfolioEAOLocal {
 	}
 	public ArrayList<Stockportfolio> getAllUserStocks(String userId){
 	  
-	    TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getAllUserStocks", Stockportfolio.class).setParameter("userId", userId);
-	    ArrayList<Stockportfolio> stockportfolioList = (ArrayList<Stockportfolio>) typedQuery.getResultList();
+	    ArrayList<Stockportfolio> stockportfolioList = new ArrayList<Stockportfolio>();
+	    TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getAllUserStocks", Stockportfolio.class);  
+	    typedQuery.setParameter("userId", userId);
 	    
-	    if(stockportfolioList != null){
-	    	return stockportfolioList;
+	    if(!typedQuery.getResultList().isEmpty()) {
+	    stockportfolioList = (ArrayList<Stockportfolio>) typedQuery.getResultList();
 	    }
-	    else {
-	    	return null;
-	    }
-	 
+	    return stockportfolioList;   
+	    
 	    
 	}
 
