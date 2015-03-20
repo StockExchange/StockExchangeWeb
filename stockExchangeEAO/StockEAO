@@ -13,6 +13,7 @@ import javax.persistence.TypedQuery;
 import com.sun.mail.imap.protocol.Item;
 
 import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
 
 
 
@@ -27,7 +28,17 @@ public class StockEAO implements StockEAOLocal {
 	}
 
 	public Stock findStock(String id) {
-		return em.find(Stock.class, id);
+		Stock stock = new Stock();
+    	
+    	try {
+			TypedQuery<Stock> typedQuery = em.createNamedQuery("getStock", Stock.class); ;
+			typedQuery.setParameter("sname", id);
+			stock = typedQuery.getSingleResult();
+			return stock;
+		} catch (Exception e) {
+			stock = null;
+			return stock;
+		}	
 	}
 
 	public Stock createStock(Stock stock) {
@@ -48,13 +59,10 @@ public class StockEAO implements StockEAOLocal {
 	}
 	public ArrayList<Stock> getAllStocks(){
 	
-		TypedQuery typedQuery = em.createNamedQuery("getAllStocks", Stock.class);
+		TypedQuery<Stock> typedQuery = em.createNamedQuery("getAllStocks", Stock.class);
 		ArrayList<Stock> tList = (ArrayList<Stock>) typedQuery.getResultList();
-		if(tList != null) {
-			return tList;
-		} else {
-			return null;
-		}
+		
+		return tList;
 		
 		
 	}
