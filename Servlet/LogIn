@@ -1,22 +1,76 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Login Page</title>
-</head>
-<body>
-	<form action="login" method="post">
-		<br>User ID: <input type="text" name="userId" /> <br>Password:
-		<input type="password" name="password" /> <br> <input
-			type="submit" value="Log in" />
-	</form>
+package org.ics.ejb.project;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@EJB
+	FacadeLocal facade;
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String userId, password;
+		
+		try {
+			String logout = request.getParameter("log");
+			if(logout.equals("logout")) {
+				request.getSession().setAttribute("feedbackLogin", "");
+				response.sendRedirect("login.jsp");
+				return;
+			}
+		} catch (Exception e1) {
+		}
+		
+		userId = request.getParameter("userId");
+		password = request.getParameter("password");
+		
+		
+		boolean result;
+		
+		Users user = null;
+		try {
+			user = facade.findUsers(userId);
+			if (user.getPassword().equals(password)) {
+				result =true;
+			} else {
+				result = false;
+				
+			}
+		} catch (Exception e) {
+			result = false;
+		}
+		
+		if(result == true) {
+			request.getSession().setAttribute("user", user);
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+			
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade.getAllUserStocks(userId);
+			
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			request.getSession().setAttribute("feedbackStockportfolio", " ");
+			response.sendRedirect("test.jsp");
+		} else {
+			request.getSession().setAttribute("feedbackLogin", "Incorrect username or password");
+			response.sendRedirect("login.jsp");
+		}
+		
+	}
 	
 
-	<jsp:useBean id="feedbackLogin" class="java.lang.String"scope="session" />
-	<br>
-	<%=feedbackLogin%>
-
-</body>
-</html>
+}
