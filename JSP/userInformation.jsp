@@ -103,11 +103,12 @@
 		}
 
 		function logOut() {
-			
+			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
 			top.location="login.jsp";
 
 		}
 		function stockMarket() {
+			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
 			top.location="test.jsp";
 
 		}
