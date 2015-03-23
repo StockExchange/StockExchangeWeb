@@ -1,0 +1,79 @@
+package org.ics.ejb.project;
+
+import java.io.IOException;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+@WebServlet("/UpdateUser")
+public class UpdateUser extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@EJB
+	FacadeLocal facade;
+
+	public UpdateUser() {
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		String userId = request.getParameter("userId");
+		String password = request.getParameter("userPassword");
+		String userFName = request.getParameter("userFName");
+		String userLName = request.getParameter("userLName");
+		String address = request.getParameter("userAddress");
+		String niNr = request.getParameter("userNinr");
+
+		request.getSession().setAttribute("feedbackStockportfolio", " ");
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+		} else {
+			request.getSession().setAttribute("feedbackUserInfo", "fail");
+			response.sendRedirect("userInformation.jsp");
+			return;
+		}
+
+		String currentPassword = user.getPassword();
+
+		if (!currentPassword.equals(password)) {
+			if (password.length() < 3) {
+				request.getSession().setAttribute("feedbackUserInfo",
+						"Password next to be 3 characters or more");
+				response.sendRedirect("userInformation.jsp");
+				request.getSession().setAttribute("user", user);
+				return;
+			} else {
+
+				user.setPassword(password);
+				facade.updateUsers(user);
+				request.getSession().setAttribute("feedbackUserInfo",
+						"Password updated");
+				response.sendRedirect("userInformation.jsp");
+				request.getSession().setAttribute("user", user);
+				return;
+			}
+		}
+
+		user.setUserFName(userFName);
+		user.setUserLName(userLName);
+		user.setAddress(address);
+		user.setPassword(password);
+		user.setNiNr(niNr);
+
+		facade.updateUsers(user);
+		request.getSession().setAttribute("feedbackUserInfo", "User Updated");
+		response.sendRedirect("userInformation.jsp");
+		request.getSession().setAttribute("user", user);
+		return;
+	}
+
+}
