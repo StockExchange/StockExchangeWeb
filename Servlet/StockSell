@@ -25,10 +25,6 @@ public class StockSell extends HttpServlet {
 	@EJB
 	FacadeLocal facade;
 	
-	//
-	@PersistenceContext(unitName = "LabEJBSql")
-	private EntityManager em;
-	//
 	public StockSell() {
     }
 
