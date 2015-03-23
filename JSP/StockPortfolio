@@ -212,11 +212,13 @@
 
 		}
 		function userInformation() {
+			<% request.getSession().setAttribute("feedbackStockportfolio", " ");  %>
 			top.location="userInformation.jsp";
 		}
 
 		
 		function logOut() {
+			<% request.getSession().setAttribute("feedbackStockportfolio", " ");  %>
 			top.location="login.jsp";
 			
 		}
