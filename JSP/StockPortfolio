@@ -11,11 +11,11 @@
 <link
 	href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
 	rel="stylesheet">
-	
+
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <!-- Javascript -->
-	
+
 
 <script>
 	var colArray = new Array();
@@ -75,121 +75,121 @@
 </head>
 <body>
 
-
-	<form action="login" method="post">
-		<input type="hidden" value="logout" name="log" readonly /> <input
-			type="submit" value="Logout" />
-	</form>
 	<jsp:useBean id="user" class="StockExchange.ejb.ics.Users"
 		scope="session" />
+	<div style="display: inline-block;">
 
-	<br> User :
-	<jsp:getProperty property="userFName" name="user" />
-	<br> User ID:
-	<jsp:getProperty property="userId" name="user" />
-	<br> User Account:
-	<jsp:getProperty property="account" name="user" />
+		 <input type="submit" value="Logout" onclick="logOut()" />
+				
+		<input type="submit" id="userInfo" value="User Information"
+			onclick="userInformation()" />
 
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-	<jsp:useBean id="feedbackStockportfolio" class="java.lang.String"
-		scope="session" />
-	<%=feedbackStockportfolio%>
-	<br>
-	<br> All Stocks:
-	<%
-		ArrayList<Stock> stocks = (ArrayList<Stock>) session
-				.getAttribute("stockList");
-		pageContext.setAttribute("stocks", stocks);
-	%>
-
-	<div
-		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
-		<table id="allStocks" width="300" rules=rows>
-			<tr>
-				<th>Name</th>
-				<th>Value</th>
-			</tr>
+	</div>
 
 
-			<c:forEach items="${stocks}" var="stock">
-				<tr onclick="funStockBuy(this)">
-					<td>
-						<center>
-							<c:out value="${stock.sName}" />
-						</center>
-					</td>
-					<td>
-						<center>
-							<c:out value="${stock.value}" />
-						</center>
-					</td>
 
+		<br> Your Account:
+		<jsp:getProperty property="account" name="user" />
+
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+		<jsp:useBean id="feedbackStockportfolio" class="java.lang.String"
+			scope="session" />
+
+		<%=feedbackStockportfolio%>
+		<br> <br> All Stocks:
+		<%
+ 	ArrayList<Stock> stocks = (ArrayList<Stock>) session
+    		.getAttribute("stockList");
+    		pageContext.setAttribute("stocks", stocks);
+ %>
+
+		<div
+			style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
+			<table id="allStocks" width="300" rules=rows>
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
 				</tr>
-			</c:forEach>
-
-		</table>
-	</div>
-	<div class="ui-widget">
-		<form action="StockBuy" method="post" align="left">
-			<br>Stock to Buy: <input type="text" name="stockToBuy" id="BuyS"
-				onkeyup="autoC(this.value)" /> <input type="number"
-				onkeyup="this.value=this.value.replace(/[^\d]/,'')"
-				style="width: 50px;" name="numberOfStocksBuy" /> <input
-				type="submit" value="Buy" /> <input type="hidden" name="userId"
-				value="<jsp:getProperty property="userId" name="user"/>" readonly />
-
-		</form>
-
-	</div>
 
 
+				<c:forEach items="${stocks}" var="stock">
+					<tr onclick="funStockBuy(this)">
+						<td>
+							<center>
+								<c:out value="${stock.sName}" />
+							</center>
+						</td>
+						<td>
+							<center>
+								<c:out value="${stock.value}" />
+							</center>
+						</td>
 
-	<br> Your Stocks
+					</tr>
+				</c:forEach>
 
-	<div
-		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
-		<table id="stockportfolio" width="300" rules=rows>
-			<tr>
-				<th>Name</th>
-				<th>Buy Value</th>
-				<th>Amount</th>
-			</tr>
-			<%
-				ArrayList<Stockportfolio> userStocks = (ArrayList<Stockportfolio>) session
-												.getAttribute("userStocks");
-										pageContext.setAttribute("userStocks", userStocks);
-			%>
+			</table>
+		</div>
+		<div class="ui-widget">
+			<form action="StockBuy" method="post" align="left">
+				<br>Stock to Buy: <input type="text" name="stockToBuy"
+					id="BuyS" onkeyup="autoC(this.value)" /> <input type="number"
+					onkeyup="this.value=this.value.replace(/[^\d]/,'')"
+					style="width: 50px;" name="numberOfStocksBuy" /> <input
+					type="submit" value="Buy" /> <input type="hidden" name="userId"
+					value="<jsp:getProperty property="userId" name="user"/>" readonly />
 
-			<c:forEach items="${userStocks}" var="stockport">
-				<tr onclick="funStockSell(this)">
-					<td><center>
-							<c:out value="${stockport.sName}" />
-						</center></td>
-					<td><center>
-							<c:out value="${stockport.value}" />
-						</center></td>
-					<td><center>
-							<c:out value="${stockport.amount}" />
-						</center></td>
+			</form>
 
+		</div>
+
+
+
+		<br> Your Stocks
+
+		<div
+			style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
+			<table id="stockportfolio" width="300" rules=rows>
+				<tr>
+					<th>Name</th>
+					<th>Buy Value</th>
+					<th>Amount</th>
 				</tr>
-			</c:forEach>
+				<%
+					ArrayList<Stockportfolio> userStocks = (ArrayList<Stockportfolio>) session
+																				.getAttribute("userStocks");
+																		pageContext.setAttribute("userStocks", userStocks);
+				%>
 
-		</table>
-	</div>
-	<div class="ui-widget">
-		<form action="StockSell" method="post" align="left">
-			<br>Stock to Sell: <input type="text" name="stockToSell"
-				id="SellS" onkeyup="autoC2(this.value)" /> <input type="number"
-				onkeyup="this.value=this.value.replace(/[^\d]/,'')"
-				style="width: 50px;" name="numberOfStocksSell" /> <input
-				type="submit" value="Sell" /> <input type="hidden" name="userId"
-				value="<jsp:getProperty property="userId" name="user"/>" readonly />
-		</form>
-	</div>
+				<c:forEach items="${userStocks}" var="stockport">
+					<tr onclick="funStockSell(this)">
+						<td><center>
+								<c:out value="${stockport.sName}" />
+							</center></td>
+						<td><center>
+								<c:out value="${stockport.value}" />
+							</center></td>
+						<td><center>
+								<c:out value="${stockport.amount}" />
+							</center></td>
 
+					</tr>
+				</c:forEach>
+
+			</table>
+		</div>
+		<div class="ui-widget">
+			<form action="StockSell" method="post" align="left">
+				<br>Stock to Sell: <input type="text" name="stockToSell"
+					id="SellS" onkeyup="autoC2(this.value)" /> <input type="number"
+					onkeyup="this.value=this.value.replace(/[^\d]/,'')"
+					style="width: 50px;" name="numberOfStocksSell" /> <input
+					type="submit" value="Sell" /> <input type="hidden" name="userId"
+					value="<jsp:getProperty property="userId" name="user"/>" readonly />
+			</form>
+		</div>
 	<script language="javascript">
 		function funStockBuy(x) {
 			var tbl = document.getElementById("allStocks");
@@ -211,8 +211,17 @@
 			ele.value = cel.innerText;
 
 		}
-	</script>
+		function userInformation() {
+			top.location="userInformation.jsp";
+		}
 
+		
+		function logOut() {
+			top.location="login.jsp";
+			
+		}
+	</script>
+	
 
 
 </body>
