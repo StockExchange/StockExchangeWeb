@@ -1,0 +1,87 @@
+package org.ics.ejb.project;
+
+import java.io.IOException;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jboss.security.auth.spi.Users.User;
+
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+@WebServlet("/CreateAccount")
+public class CreateAccount extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@EJB
+	FacadeLocal facade;
+
+	public CreateAccount() {
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		String userId = request.getParameter("userId");
+		String password = request.getParameter("userPassword");
+		String repeatPassword = request.getParameter("repeatPassword");
+		String userFName = request.getParameter("userFName");
+		String userLName = request.getParameter("userLName");
+		String address = request.getParameter("userAddress");
+		String niNr = request.getParameter("userNinr");
+
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"userId already exists");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+		
+		if(userId.length() < 3) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"userId needs to have at least 3 characters");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+		
+		if(password.length() < 3) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"password need to be at least 3 characters");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+		
+		if(!password.equals(repeatPassword)) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"passwords does not match");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+		
+		Users tmpUser = new Users();
+		tmpUser.setUserId(userId);
+		tmpUser.setPassword(password);
+		tmpUser.setUserFName(userFName);
+		tmpUser.setUserLName(userLName);
+		tmpUser.setAddress(address);
+		tmpUser.setNiNr(niNr);
+		tmpUser.setAccount(2000);
+		facade.createUsers(tmpUser);
+		
+		request.getSession().setAttribute("feedbackCreateAcc",
+				" ");
+		request.getSession().setAttribute("feedbackLogin",
+				"Account creatad");
+		response.sendRedirect("login.jsp");
+		return;
+
+	}
+
+}
