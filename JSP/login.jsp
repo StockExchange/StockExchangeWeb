@@ -28,11 +28,16 @@
 				information.style.display = "none";
 			}
 		}
+		function createAccount() {
+			top.location="createAccount.jsp";
+			
+		}
 	</script>
 	<div id="info" style="display: none;">
 		<center>
 			StockExchange is a lovley application! <br> <br> Such an
 			application! <br> WOW!
+			<input type="submit" value="Create an account" onclick="createAccount()" />
 			<img src="http://tr1.cbsistatic.com/hub/i/2014/05/15/f8964afd-bd82-4e0e-bcbe-e927363dcdc1/codedoge.jpg">
 		</center>
 		
