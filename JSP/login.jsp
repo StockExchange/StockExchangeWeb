@@ -5,17 +5,13 @@
 <head>
 <input type="submit" value="About" align="left" id="about"
 	onclick="inf(this.value)" />
-<center>
-	<h1>StockExchange</h1>
-</center>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Login Page</title>
+<title>StockExchange- Login</title>
+<div id ="header">StockExchange</div>
 </head>
 <body>
-
 	<script>
 		function inf(val) {
-
 			if (val == "About") {
 				var loginpage = document.getElementById("loginpage");
 				loginpage.style.display = "none";
@@ -30,16 +26,16 @@
 				btnValue.value = "About";
 				var information = document.getElementById("info");
 				information.style.display = "none";
-
 			}
-
 		}
 	</script>
 	<div id="info" style="display: none;">
 		<center>
 			StockExchange is a lovley application! <br> <br> Such an
 			application! <br> WOW!
+			<img src="http://tr1.cbsistatic.com/hub/i/2014/05/15/f8964afd-bd82-4e0e-bcbe-e927363dcdc1/codedoge.jpg">
 		</center>
+		
 	</div>
 	<div id="loginpage" style="border: 2px solid black";>
 		<form action="login" method="post">
@@ -57,26 +53,27 @@
 		scope="session" />
 	<br>
 	<%=feedbackLogin%>
-
+	
 	<style type="text/css">
-		#footer {
-			/*background-color:black;
-		    color:white;
-		    text-align:center;
-		  	padding:5px;
-		  	bottom:0;
-		  	left:0;*/
-			padding: 5px;
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			background-color: black;
-			color: white;
-			text-align: center;
-		}
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	text-align: center;
+	font-size: 40px;
+}
+#footer {
+	padding: 5px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background-color: black;
+	color: white;
+	text-align: center;
+}
 </style>
-
 	<div id="footer">Copyright© Ucan code</div>
-
+	
 </body>
 </html>
