@@ -6,40 +6,34 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Testclass</title>
-
+<title>StockExchange- UserInformation</title>
+<div id="header">StockExchange</div>
 <link
 	href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
 	rel="stylesheet">
-
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
 <!-- Javascript -->
+
 </head>
 <body>
-
-
 	<jsp:useBean id="user" class="StockExchange.ejb.ics.Users"
 		scope="session" />
 	<div style="display: inline-block;">
-
 		<input type="submit" value="Logout" onclick="logOut()" /> <input
 			type="submit" id="userInfo" value="Stock Market"
 			onclick="stockMarket()" />
-
 	</div>
-
 	<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
 	<jsp:useBean id="feedbackUserInfo" class="java.lang.String"
 		scope="session" />
 	<br>
 	<%=feedbackUserInfo%>
 	<br>
 	<br>
-	
-	<form id="tableUserInfo" action="UpdateUser" method="post">
+	<center><form id="tableUserInfo" action="UpdateUser" method="post">
 		User ID : <input type="text" name="userId"
 			value="<jsp:getProperty property="userId" name="user"/>" readonly />
 		<br> First Name :<input type="text" name="userFName"
@@ -56,12 +50,10 @@
 			name="userPassword"
 			value="<jsp:getProperty property="password" name="user"/>" /> <input
 			type="submit" value="Update" />
-	</form>
+	</form></center>
 	<br>
-	<input type="submit" value="Change Password"
-		onclick="changePasswordShow()" />
-
-
+	<center><input type="submit" value="Change Password"
+		onclick="changePasswordShow()" /></center>
 	<div id="passwordUpdate" style="display: none;">
 		<center>
 			Old Password <input type="password" id="wirteOldPassword" /> <br>
@@ -70,55 +62,59 @@
 			<input type="submit" value="Change Password"
 				onclick="changePassword()" /> <input type="submit" value="Cancel"
 				onclick="cancelPasswordChange()" />
-
 		</center>
 	</div>
-
 	<script type="text/javascript">
 		function changePasswordShow() {
 			var passwordChange = document.getElementById("passwordUpdate");
 			passwordChange.style.display = "block";
 		}
-
 		function changePassword() {
 			var currentPassword = document.getElementById("currentPassword");
 			var oldPassword = document.getElementById("wirteOldPassword").value;
 			var newPassword = document.getElementById("wirteNewPassword").value;
 			var repeatPassword = document.getElementById("wirteRepeatPassword").value;
-
 			if (currentPassword.value == oldPassword) {
 				if (newPassword == repeatPassword) {
 					currentPassword.value = newPassword;
-					
 					var passwordChange = document
 							.getElementById("passwordUpdate");
 					passwordChange.style.display = "none";
-					
 					var form = document.getElementById("tableUserInfo");
 					form.submit();
-
 				}
 			}
-
 		}
-
 		function logOut() {
-			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
-			top.location="login.jsp";
-
+			top.location = "login.jsp";
 		}
 		function stockMarket() {
-			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
-			top.location="test.jsp";
-
+			top.location = "test.jsp";
 		}
 		function cancelPasswordChange() {
 			var passwordChange = document.getElementById("passwordUpdate");
 			passwordChange.style.display = "none";
-
 		}
 	</script>
-
-
+		<style type="text/css">
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	text-align: center;
+	font-size: 40px;
+}
+#footer {
+	padding: 5px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background-color: black;
+	color: white;
+	text-align: center;
+}
+</style>
+	<div id="footer">Copyright© Ucan code</div>
 </body>
 </html>
