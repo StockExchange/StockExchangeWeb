@@ -1,0 +1,424 @@
+package org.ics.ejb.project;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.Stockportfolio;
+import StockExchange.ejb.ics.Users;
+import StockExchange.facade.ics.FacadeLocal;
+
+@WebServlet("/Servlet")
+public class Servlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@EJB
+	FacadeLocal facade;
+
+	public Servlet() {
+		super();
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String method = request.getParameter("method");
+
+		Class[] classes = new Class[2];
+		classes[0] = HttpServletRequest.class;
+		classes[1] = HttpServletResponse.class;
+
+		try {
+			Method m = this.getClass().getMethod(method, classes);
+			m.invoke(this, request, response);
+
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void createAccount(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		String userId = request.getParameter("userId");
+		String password = request.getParameter("userPassword");
+		String repeatPassword = request.getParameter("repeatPassword");
+		String userFName = request.getParameter("userFName");
+		String userLName = request.getParameter("userLName");
+		String address = request.getParameter("userAddress");
+		String niNr = request.getParameter("userNinr");
+
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"userId already exists");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+
+		if (userId.length() < 3) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"userId needs to have at least 3 characters");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+
+		if (password.length() < 3) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"password need to be at least 3 characters");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+
+		if (!password.equals(repeatPassword)) {
+			request.getSession().setAttribute("feedbackCreateAcc",
+					"passwords does not match");
+			response.sendRedirect("createAccount.jsp");
+			return;
+		}
+
+		Users tmpUser = new Users();
+		tmpUser.setUserId(userId);
+		tmpUser.setPassword(password);
+		tmpUser.setUserFName(userFName);
+		tmpUser.setUserLName(userLName);
+		tmpUser.setAddress(address);
+		tmpUser.setNiNr(niNr);
+		tmpUser.setAccount(2000);
+		facade.createUsers(tmpUser);
+
+		request.getSession().setAttribute("feedbackCreateAcc", " ");
+		request.getSession().setAttribute("feedbackLogin", "Account creatad");
+		response.sendRedirect("login.jsp");
+		return;
+	}
+
+	public void updateUser(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+
+		String userId = request.getParameter("userId");
+		String password = request.getParameter("userPassword");
+		String userFName = request.getParameter("userFName");
+		String userLName = request.getParameter("userLName");
+		String address = request.getParameter("userAddress");
+		String niNr = request.getParameter("userNinr");
+
+		request.getSession().setAttribute("feedbackStockportfolio", " ");
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+		} else {
+			request.getSession().setAttribute("feedbackUserInfo", "fail");
+			response.sendRedirect("userInformation.jsp");
+			return;
+		}
+
+		String currentPassword = user.getPassword();
+
+		if (!currentPassword.equals(password)) {
+			if (password.length() < 3) {
+				request.getSession().setAttribute("feedbackUserInfo",
+						"Password next to be 3 characters or more");
+				response.sendRedirect("userInformation.jsp");
+				request.getSession().setAttribute("user", user);
+				return;
+			} else {
+
+				user.setPassword(password);
+				facade.updateUsers(user);
+				request.getSession().setAttribute("feedbackUserInfo",
+						"Password updated");
+				response.sendRedirect("userInformation.jsp");
+				request.getSession().setAttribute("user", user);
+				return;
+			}
+		}
+
+		user.setUserFName(userFName);
+		user.setUserLName(userLName);
+		user.setAddress(address);
+		user.setPassword(password);
+		user.setNiNr(niNr);
+
+		facade.updateUsers(user);
+		request.getSession().setAttribute("feedbackUserInfo", "User Updated");
+		response.sendRedirect("userInformation.jsp");
+		request.getSession().setAttribute("user", user);
+		return;
+	}
+
+	public void sellStock(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+
+		String userId, stocktoSell, s;
+		int numberOfStocksToSell = 0;
+
+		stocktoSell = request.getParameter("stockToSell");
+		userId = request.getParameter("userId");
+		s = request.getParameter("numberOfStocksSell");
+
+		try {
+			numberOfStocksToSell = Integer.valueOf(s);
+			if (numberOfStocksToSell < 1) {
+				request.getSession().setAttribute("feedbackStockportfolio",
+						"Invalid amount");
+				response.sendRedirect("test.jsp");
+				return;
+			}
+		} catch (Exception e1) {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"Need to set Amount of Stocks");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+			request.getSession().setAttribute("user", user);
+		} else {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"something went worng");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		Stockportfolio stockportfolio = facade.findStockporfolio(userId,
+				stocktoSell);
+
+		if (stockportfolio == null) {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"Stock not in portfolio");
+			response.sendRedirect("test.jsp");
+			return;
+
+		} else {
+
+			int newAmount = (stockportfolio.getAmount() - numberOfStocksToSell); //
+
+			if (newAmount > 0) {
+				stockportfolio.setAmount(newAmount);
+				Stock tmpStock = facade.findStock(stockportfolio.getsName());
+				Double stockCurrentValue = tmpStock.getvalue();
+				float newAccount = (float) (user.getAccount() + (stockCurrentValue * numberOfStocksToSell));
+				user.setAccount(newAccount);
+				stockportfolio.setAmount(newAmount);
+				facade.updateStockportfolio(stockportfolio);
+				facade.updateUsers(user);
+
+			} else if (newAmount == 0) { //
+				Double stockCurrentValue = facade.findStock(
+						stockportfolio.getsName()).getvalue();
+				float newAccount = (float) (user.getAccount() + (stockCurrentValue * numberOfStocksToSell));
+				user.setAccount(newAccount);
+				facade.updateUsers(user);
+				facade.deleteStockportfolio(stockportfolio);
+
+			} else {
+				request.getSession().setAttribute("feedbackStockportfolio",
+						"Not enoguh stocks in portfolio");
+				response.sendRedirect("test.jsp");
+				return;
+			}
+
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade
+					.getAllUserStocks(userId);
+
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"Stock sold");
+			response.sendRedirect("test.jsp");
+			return;
+
+		}
+
+	}
+
+	public void buyStock(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		String stocktoBuy, userId, s;
+		int numberOfStocksToBuy = 0;
+
+		stocktoBuy = request.getParameter("stockToBuy");
+		userId = request.getParameter("userId");
+		s = request.getParameter("numberOfStocksBuy");
+
+		try {
+			numberOfStocksToBuy = Integer.valueOf(s);
+			if (numberOfStocksToBuy < 1) {
+				request.getSession().setAttribute("feedbackStockportfolio",
+						"Invalid amount");
+				response.sendRedirect("test.jsp");
+				return;
+			}
+		} catch (Exception e1) {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"Need to set Amount of Stocks");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		Users user = facade.findUsers(userId);
+
+		if (user != null) {
+			request.getSession().setAttribute("user", user);
+		} else {
+			request.getSession().setAttribute("feedbackStockportfolio", "fail");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		Stock stock = facade.findStock(stocktoBuy);
+
+		if (stock == null) {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"stock does not exists");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		if ((stock.getvalue() * numberOfStocksToBuy) > user.getAccount()) {
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"not enough money in account");
+			response.sendRedirect("test.jsp");
+			return;
+		}
+
+		Stockportfolio sp = facade.findStockporfolio(userId, stocktoBuy);
+
+		if (sp != null) {
+			Double stockCurrentValue = facade.findStock(sp.getsName())
+					.getvalue();
+			float newAccount = (float) (user.getAccount() - (stockCurrentValue * numberOfStocksToBuy));
+			user.setAccount(newAccount);
+			int newAmount = (sp.getAmount() + numberOfStocksToBuy); //
+			sp.setAmount(newAmount);
+			facade.updateStockportfolio(sp);
+			facade.updateUsers(user);
+
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade
+					.getAllUserStocks(userId);
+
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			request.getSession().setAttribute("feedbackStockportfolio",
+					"Stock bought");
+			response.sendRedirect("test.jsp");
+			return;
+
+		} else {
+
+			try {
+				Stockportfolio newStockportfolio = new Stockportfolio();
+				String val = stock.getvalue().toString();
+				float stockCurrentValue = Float.valueOf(val);
+				float newAccount = (float) (user.getAccount() - (stockCurrentValue * numberOfStocksToBuy));//
+				user.setAccount(newAccount);
+
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date now = new Date();
+				String currentDate = df.format(now);
+
+				newStockportfolio.setUserId(userId);
+				newStockportfolio.setsName(stock.getsName());
+				newStockportfolio.setDate(currentDate);
+				newStockportfolio.setValue(stockCurrentValue);
+				newStockportfolio.setAmount(numberOfStocksToBuy); //
+				facade.createStockportfolio(newStockportfolio);
+				facade.updateUsers(user);
+
+				ArrayList<Stock> tmpStockList = facade.getAllStocks();
+
+				request.getSession().setAttribute("stockList", tmpStockList);
+				ArrayList<Stockportfolio> tmpStockUserList = facade
+						.getAllUserStocks(userId);
+
+				request.getSession().setAttribute("userStocks",
+						tmpStockUserList);
+				request.getSession().setAttribute("feedbackStockportfolio",
+						"Stock bought");
+				response.sendRedirect("test.jsp");
+				return;
+
+			} catch (NumberFormatException e) {
+				request.getSession().setAttribute("feedbackStockportfolio",
+						"Failed to buy Stock");
+				response.sendRedirect("test.jsp");
+				return;
+			}
+
+		}
+
+	}
+
+	public void loginForm(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+
+		String userId, password;
+
+		userId = request.getParameter("userId");
+		password = request.getParameter("password");
+
+		boolean result;
+
+		Users user = null;
+		try {
+			user = facade.findUsers(userId);
+			if (user.getPassword().equals(password)) {
+				result = true;
+			} else {
+				result = false;
+
+			}
+		} catch (Exception e) {
+			result = false;
+		}
+
+		if (result == true) {
+			request.getSession().setAttribute("user", user);
+			ArrayList<Stock> tmpStockList = facade.getAllStocks();
+
+			request.getSession().setAttribute("stockList", tmpStockList);
+			ArrayList<Stockportfolio> tmpStockUserList = facade
+					.getAllUserStocks(userId);
+
+			request.getSession().setAttribute("userStocks", tmpStockUserList);
+			request.getSession().setAttribute("feedbackStockportfolio", " ");
+			request.getSession().setAttribute("feedbackLogin", " ");
+			response.sendRedirect("test.jsp");
+
+		} else {
+			request.getSession().setAttribute("feedbackLogin",
+					"Incorrect username or password");
+
+			response.sendRedirect("login.jsp");
+
+		}
+
+	}
+
+}
