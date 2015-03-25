@@ -33,8 +33,32 @@ public class Servlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String method = request.getParameter("method");
+		
+		
+		if(method.equals("createAccount")){
+			createAccount(request, response);
+		}
+		else if(method.equals("updateUser")) {
+			updateUser(request, response);
+		}
+		else if(method.equals("sellStock")) {
+			sellStock(request, response);
+		} 
+		else if(method.equals("buyStock")) {
+			buyStock(request, response);
+		}
+		else if(method.equals("loginForm")) {
+			loginForm(request, response);
+		}
+		else {
+			
+		}
+		
+		
+		
+		
 
-		Class[] classes = new Class[2];
+	/*	Class[] classes = new Class[2];
 		classes[0] = HttpServletRequest.class;
 		classes[1] = HttpServletResponse.class;
 
@@ -53,7 +77,7 @@ public class Servlet extends HttpServlet {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-
+*/
 	}
 
 	public void createAccount(HttpServletRequest request,
