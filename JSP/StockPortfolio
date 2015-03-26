@@ -63,6 +63,7 @@
 			type="submit" id="userInfo" value="User Information"
 			onclick="userInformation()" />
 	</div>
+	<div id = "div">
 	<br> Your Account:
 	<jsp:getProperty property="account" name="user" />
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -101,17 +102,18 @@
 		</table>
 	</div>
 	<div class="ui-widget">
-		<form action="StockBuy" method="post" align="left">
+		<form action="Servlet" method="post" align="left">
 			<br>Stock to Buy: <input type="text" name="stockToBuy" id="BuyS"
 				onkeyup="autoC(this.value)" /> <input type="number"
 				onkeyup="this.value=this.value.replace(/[^\d]/,'')"
 				style="width: 50px;" name="numberOfStocksBuy" /> <input
 				type="submit" value="Buy" /> <input type="hidden" name="userId"
 				value="<jsp:getProperty property="userId" name="user"/>" readonly />
+				<input type="hidden" value="buyStock" name="method" readonly />
 		</form>
 	</div>
-	<br> <center>Your Stocks</center>
-	<center><div
+	<br> Your Stocks: 
+	<div
 		style="width: 325px; height: 150px; overflow: auto; border: 2px solid black;">
 		<table id="stockportfolio" width="300" rules=rows>
 			<tr>
@@ -137,16 +139,18 @@
 				</tr>
 			</c:forEach>
 		</table>
-	</div></center>
-	<center><div class="ui-widget">
-		<form action="StockSell" method="post">
+	</div>
+	<div class="ui-widget">
+		<form action="Servlet" method="post">
 			<br>Stock to Sell: <input type="text" name="stockToSell"
 				id="SellS" onkeyup="autoC2(this.value)" /> <input type="number"
 				onkeyup="this.value=this.valude.replace(/[^\d]/,'')"
 				style="width: 50px;" name="numberOfStocksSell" /> <input
 				type="submit" value="Sell" /> <input type="hidden" name="userId"
-				value="<jsp:getProperty property="userId" name="user"/>" readonly />
-		</form></center>
+				value="<jsp:getProperty property="userId" name="user"/>" readonly/>
+				<input type="hidden" value="sellStock" name="method" readonly />
+		</form>
+	</div>
 	</div>
 	<script language="javascript">
 		function funStockBuy(x) {
@@ -183,6 +187,10 @@
 	font-size: 40px;
 }
 
+
+#div{
+align = "right";
+}
 #footer {
 	padding: 5px;
 	position: absolute;
