@@ -11,8 +11,9 @@ import javax.persistence.TypedQuery;
 
 import org.jboss.security.plugins.TmpFilePassword;
 
-import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.PortfolioId;
 import StockExchange.ejb.ics.Stockportfolio;
+
 
 @Stateless
 public class StockportfolioEAO implements StockportfolioEAOLocal {
@@ -25,18 +26,31 @@ public class StockportfolioEAO implements StockportfolioEAOLocal {
     
     public Stockportfolio findStockporfolio(String userId, String sName) {
   
-    	Stockportfolio stockportfolio = new Stockportfolio();
+    	
+    	PortfolioId id = new PortfolioId(userId, sName);
+		 
+		
+		 Stockportfolio stockportfolio = em.find(Stockportfolio.class, id);
+		return stockportfolio;
+				 
+	/*
+    Stockportfolio stockportfolio = new Stockportfolio(userId,sName);
     	
     	try {
+    		/*
 			TypedQuery<Stockportfolio> typedQuery = em.createNamedQuery("getStockportfolio", Stockportfolio.class); 
 			typedQuery.setParameter("userId", userId);
 			typedQuery.setParameter("sName", sName);
 			stockportfolio = typedQuery.getSingleResult();
+    		
+    	
 			return stockportfolio;
 		} catch (Exception e) {
 			stockportfolio = null;
 			return stockportfolio;
 		}
+		
+		*/
     }
 
 	public Stockportfolio createStockportfolio(Stockportfolio stockportfolio) {
