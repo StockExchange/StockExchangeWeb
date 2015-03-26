@@ -27,33 +27,25 @@ import javax.persistence.Table;
 
 @Table(name="Stockportfolio")
 public class Stockportfolio implements Serializable {
-	
 
-	
-	private String userId;
-	private String sName;
 	private String date;
 	private float value;
 	private int amount;
+	private PortfolioId id;
 	
+	public Stockportfolio(String user, String stock){
+		id = new PortfolioId(user,stock);
+	}
 
-	@Id
-	@Column(name="userId")
-	public String getUserId() {
-		return userId;
+	@EmbeddedId
+	public PortfolioId getId() {
+		return id;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setId(PortfolioId id) {
+		this.id = id;
 	}
 	
-	@Id
-	@Column(name="sName")
-	public String getsName() {
-		return sName;
-	}
-	public void setsName(String sName) {
-		this.sName = sName;
-	}
+	
 	@Column(name="date")
 	public String getDate() {
 		return date;
