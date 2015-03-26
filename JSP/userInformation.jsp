@@ -34,7 +34,7 @@
 	<br>
 	<br>
 	<center><form id="tableUserInfo" action="UpdateUser" method="post">
-		User ID : <input type="text" name="userId"
+		User ID : <input type="text" name="userId" style="background-color:#D0D0D0"
 			value="<jsp:getProperty property="userId" name="user"/>" readonly />
 		<br> First Name :<input type="text" name="userFName"
 			value="<jsp:getProperty property="userFName" name="user" />" /> <br>
@@ -44,7 +44,7 @@
 			value="<jsp:getProperty property="address" name="user" />" /> <br>
 		Ni Number :<input type="text" name="userNinr"
 			value="<jsp:getProperty property="niNr" name="user" />" /> <br>
-		Account :<input type="text" name="userAccount"
+		Account :<input type="text" name="userAccount" style="background-color:#D0D0D0"
 			value="<jsp:getProperty property="account" name="user" />" readonly />
 		<br> <input id="currentPassword" type="hidden"
 			name="userPassword"
