@@ -5,48 +5,53 @@
 <head>
 <input type="submit" value="Home" align="left" onclick="home()" />
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>StockExchange- Create Account</title>
+<div id="header">StockExchange</div>
 </head>
 <body>
-<br>
-<jsp:useBean id="feedbackCreateAcc" class="java.lang.String"
+	<br>
+	<jsp:useBean id="feedbackCreateAcc" class="java.lang.String"
 		scope="session" />
 	<br>
 	<%=feedbackCreateAcc%>
 	<br>
 	<br>
-	<form action="CreateAccount" method="post">
-		User ID : <input type="text" name="userId" /> <br> <br> First Name :<input
-			type="text" name="userFName" /> <br> <br> Last Name :<input
-			type="text" name="userLName" /> <br> <br> Adress :<input
-			type="text" name="userAddress" /> <br> <br> Ni Number :<input
-			type="text" name="userNinr" /> <br> <br> Password <input
-			type="password" name="userPassword" /> <br> <br>
-			Repeat Password
-			<input
-			type="password" name="repeatPassword"> <br> <input
-			type="submit" value="Create Account" />
-
-
-
-	</form>
-
-
-
-
-
-
-
-
+	<center><form action="CreateAccount" method="post">
+		User ID : <input type="text" name="userId"/> <br> 
+		First Name :<input type="text" name="userFName" /> <br> 
+		Last Name :<input type="text" name="userLName" /> <br> 
+		Adress :<input type="text" name="userAddress" /> <br> 
+		Ni Number :<input type="text" name="userNinr" /> <br>
+		Password <input type="password" name="userPassword" /> <br>
+		Repeat Password <input type="password" name="repeatPassword"> <br>
+		<br> <input type="submit" value="Create Account" />
+	</form></center>
 	<script type="text/javascript">
-	
 		function home() {
 	<%request.getSession().setAttribute("feedbackLogin", " ");%>
 		top.location = "login.jsp";
 		}
-		
 	</script>
+		<style type="text/css">
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	text-align: center;
+	font-size: 40px;
+}
 
-
+#footer {
+	padding: 5px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background-color: black;
+	color: white;
+	text-align: center;
+}
+</style>
+	<div id="footer">Copyright© Ucan code</div>
 </body>
 </html>
