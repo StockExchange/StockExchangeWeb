@@ -1,0 +1,54 @@
+
+	package StockExchange.ejb.ics;
+
+	import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+
+	@Embeddable
+	public class PortfolioId implements Serializable{
+		private String userId, sName;
+		
+		public PortfolioId(String user, String stock) {
+			userId = user;
+			sName = stock;
+		}
+		
+		public PortfolioId() {
+		
+		}
+		
+		@Column(name="userId")
+		public String getUserId() {
+			return userId;
+		}
+		public void setUserId(String userId) {
+			this.userId = userId;
+		}
+		
+		@Column(name="sName")
+		public String getsName() {
+			return sName;
+		}
+		public void setsName(String sName) {
+			this.sName = sName;
+		}
+		
+		@Override
+		public boolean equals(Object lol){
+			return false;
+		}
+		
+		@Override
+		public int hashCode(){
+			return 4;
+		}
+		 
+		
+		
+		
+	}
+
+
