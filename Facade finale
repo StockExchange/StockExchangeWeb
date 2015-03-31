@@ -1,0 +1,84 @@
+package StockExchange.facade.ics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+
+import StockExchange.eao.ics.StockEAOLocal;
+import StockExchange.eao.ics.StockPortfolioEAOLocal;
+import StockExchange.eao.ics.UserEAO;
+import StockExchange.eao.ics.UserEAOLocal;
+import StockExchange.ejb.ics.Stock;
+import StockExchange.ejb.ics.StockPortfolio;
+import StockExchange.ejb.ics.Users;
+
+/**
+ * Session Bean implementation class Facade
+ */
+@Stateless
+public class Facade implements FacadeLocal {
+
+	@EJB
+	private StockEAOLocal StockEAO;
+	@EJB
+	private UserEAOLocal UserEAO;
+	@EJB
+	private StockPortfolioEAOLocal StockPortfolioEAO;
+
+	public Facade() {
+	}
+
+	public Stock findStock(String id) {
+		return StockEAO.findStock(id);
+	}
+
+	public Stock createStock(Stock stock) {
+		return StockEAO.createStock(stock);
+	}
+
+	public Stock updateStock(Stock stock) {
+		return StockEAO.updateStock(stock);
+	}
+
+	public void deleteStock(String id) {
+		StockEAO.deleteStock(id);
+	}
+	public ArrayList<Stock> getAllStocks(){
+		return StockEAO.getAllStocks();
+	}
+	public Users findUser(String id) {
+		return UserEAO.findUser(id);
+	}
+	public Users createUser(Users user){
+		return UserEAO.createUser(user);
+	}
+	public Users updateUser(Users user){
+		return UserEAO.updateUser(user);
+	}
+	public void deleteUser(String id){
+		UserEAO.deleteUser(id);
+	}
+	public List<Users> TopTenMoney(){
+		return UserEAO.TopTenMoney();
+	}
+	
+	public StockPortfolio findStockPortfolio(String userId, String sName){
+		return StockPortfolioEAO.findStockPorfolio(userId, sName);
+	}
+	
+	public StockPortfolio createStockPortfolio(StockPortfolio stockportfolio){
+		return StockPortfolioEAO.createStockPortfolio(stockportfolio);
+	}
+	public StockPortfolio updateStockPortfolio(StockPortfolio stockportfolio){
+		return StockPortfolioEAO.updateStockPortfolio(stockportfolio);
+	}
+	public void deleteStockPortfolio(StockPortfolio s){
+		StockPortfolioEAO.deleteStockPortfolio(s);
+	}
+	public ArrayList<StockPortfolio> getAllUserStocks(String id){
+		return StockPortfolioEAO.getAllUserStocks(id);
+	}
+
+}
