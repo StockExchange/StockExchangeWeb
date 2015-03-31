@@ -1,0 +1,71 @@
+package StockExchange.ejb.ics;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+@Entity  
+@NamedQueries({
+@NamedQuery(
+		name = "getAllUserStocks",
+		query = "Select p from StockPortfolio p Where p.id.userId = :userId"
+		),
+@NamedQuery(
+		name ="getStockportfolio",
+		query ="Select p from StockPortfolio p Where p.id.userId=:userId and p.id.sName=:sName"
+		)
+
+})
+
+@Table(name="Stockportfolio")
+public class StockPortfolio implements Serializable {
+
+	private String date;
+	private float value;
+	private int amount;
+	private PortfolioId id;
+	
+	public StockPortfolio(String user, String stock){
+		id = new PortfolioId(user,stock);
+	}
+
+	public StockPortfolio(){
+		
+	}
+
+	@EmbeddedId
+	public PortfolioId getId() {
+		return id;
+	}
+	public void setId(PortfolioId id) {
+		this.id = id;
+	}
+	
+	
+	@Column(name="date")
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	@Column(name="value")
+	public float getValue() {
+		return value;
+	}
+	public void setValue(float value) {
+		this.value = value;
+	}
+	@Column(name="amount")
+	public int getAmount() {
+		return amount;
+	}
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+}
