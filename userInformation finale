@@ -1,0 +1,116 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1" import="StockExchange.ejb.ics.StockPortfolio"
+	import="java.util.ArrayList" import="StockExchange.ejb.ics.Stock"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Testclass</title>
+
+<link
+	href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+	rel="stylesheet">
+
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- Javascript -->
+</head>
+<body>
+
+
+	<jsp:useBean id="user" class="StockExchange.ejb.ics.Users"
+		scope="session" />
+	<div style="display: inline-block;">
+
+		<input type="submit" value="Logout" onclick="logOut()" /> <input
+			type="submit" id="userInfo" value="Stock Market"
+			onclick="stockMarket()" />
+
+	</div>
+
+	<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+	<jsp:useBean id="feedbackUserInfo" class="java.lang.String"
+		scope="session" />
+	<br>
+	<%=feedbackUserInfo%>
+	<br>
+	<br>
+		<form id="tableUserInfo" action="Servlet" method="post">
+		User ID : <input type="text" name="userId"
+			value="<jsp:getProperty property="userId" name="user"/>" readonly />
+		<br><br> First Name :<input type="text" name="userFName"
+			value="<jsp:getProperty property="userFName" name="user" />" /> <br><br>
+		Last Name :<input type="text" name="userLName"
+			value="<jsp:getProperty property="userLName" name="user" />" /> <br><br>
+		Adress :<input type="text" name="userAddress"
+			value="<jsp:getProperty property="address" name="user" />" /> <br><br>
+		Social Security Number :<input type="text" name="userNinr"
+			value="<jsp:getProperty property="niNr" name="user" />" /> <br><br>
+		Account :<input type="text" name="userAccount"
+			value="<jsp:getProperty property="account" name="user" />" readonly />
+		<br><br> <input id="currentPassword" type="hidden"
+			name="userPassword"
+			value="<jsp:getProperty property="password" name="user"/>" /> <input
+			type="submit" value="Update" />
+			<input type="hidden" value="updateUser" name="method" readonly />
+	</form>
+	<br><br>
+	<input type="submit" value="Change Password"
+		onclick="changePasswordShow()" />
+
+
+	<div id="passwordUpdate" style="display: none;">
+		<center>
+			Old Password <input type="password" id="wirteOldPassword" /> <br>
+			New Password <input type="password" id="wirteNewPassword" /> <br>
+			Repeat Password <input type="password" id="wirteRepeatPassword" /> <br>
+			<input type="submit" value="Change Password"
+				onclick="changePassword()" /> <input type="submit" value="Cancel"
+				onclick="cancelPasswordChange()" />
+
+		</center>
+	</div>
+
+	<script type="text/javascript">
+		function changePasswordShow() {
+			var passwordChange = document.getElementById("passwordUpdate");
+			passwordChange.style.display = "block";
+		}
+		function changePassword() {
+			var currentPassword = document.getElementById("currentPassword");
+			var oldPassword = document.getElementById("wirteOldPassword").value;
+			var newPassword = document.getElementById("wirteNewPassword").value;
+			var repeatPassword = document.getElementById("wirteRepeatPassword").value;
+			if (currentPassword.value == oldPassword) {
+				if (newPassword == repeatPassword) {
+					currentPassword.value = newPassword;
+					
+					var passwordChange = document
+							.getElementById("passwordUpdate");
+					passwordChange.style.display = "none";
+					
+					var form = document.getElementById("tableUserInfo");
+					form.submit();
+				}
+			}
+		}
+		function logOut() {
+			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
+			top.location="login.jsp";
+		}
+		function stockMarket() {
+			<% request.getSession().setAttribute("feedbackUserInfo", " ");  %>
+			top.location="StockPortfolio.jsp";
+		}
+		function cancelPasswordChange() {
+			var passwordChange = document.getElementById("passwordUpdate");
+			passwordChange.style.display = "none";
+		}
+	</script>
+
+
+</body>
+</html>
